@@ -17,6 +17,12 @@ app.use(ctx => {
    // print date 
     ctx.response.body = ctx.userData;
     console.log(typeof(from));
+    // Error checking
+    if (ctx.userData) {
+	ctx.body = ctx.userData;
+    } else {
+	ctx.throw(400, 'no data found');
+    }
 });
 
 app.listen(3000);

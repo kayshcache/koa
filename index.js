@@ -8,21 +8,23 @@ app.context.userData = {
     last: 'Henri',
 };
 
+// log
+app.use(async (ctx, next) => {
+	await next();
+	const responseTime = ctx.response.get('X-Response-Time');
+	console.log(`${ctx.request.method} ${ctx.request.url} - ${responseTime}`);
+});
+app.use(async (ctx, next) => {
+	const start = Date.now();
+	await next();
+	const milisecond = Date.now() - start;
+	ctx.set('X-Response-Time', `${milisecond}ms`);
+});
+
 // response
-app.use(ctx => {
-    // use state
-    ctx.state.user = 'Mrs Stateless';
-    // request obj usage
-    let from = ctx.request;
-   // print date 
-    ctx.response.body = ctx.userData;
-    console.log(typeof(from));
-    // Error checking
-    if (ctx.userData) {
-	ctx.body = ctx.userData;
-    } else {
-	ctx.throw(400, 'no data found');
-    }
+app.use(async ctx => {
+	ctx.response.body = ctx.userData;
 });
 
 app.listen(3000);
+
